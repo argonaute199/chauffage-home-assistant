@@ -1,4 +1,3 @@
-# chauffage-home-assistant
 ## Home Assistant - Chauffage de bout en bout
 
 This repository contains the files of a post called "Chauffage de bout en bout" in HACF french forum.
