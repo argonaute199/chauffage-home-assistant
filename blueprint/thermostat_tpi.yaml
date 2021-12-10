@@ -41,7 +41,7 @@ blueprint:
           domain: sensor
           device_class: temperature
     entity_fenetre:
-      name: Fenètre
+      name: Fenêtre
       description: Capteur d'ouverture de fenêtre (sensor)
       selector:
         entity:
