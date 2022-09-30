@@ -9,3 +9,4 @@ It is the complete implementation of a heating management system for home assist
 - Time zones
 
 Please see https://forum.hacf.fr/t/gestion-de-bout-en-bout-du-chauffage/4897
+xxx
