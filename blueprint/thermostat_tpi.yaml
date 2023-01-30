@@ -1,6 +1,6 @@
 blueprint:
   name: Thermostat TPI
-  description: Thermostat TPI (Time Propertional & Integral)
+  description: Thermostat TPI (Time Proportional & Integral)
   domain: automation
 
   input:
