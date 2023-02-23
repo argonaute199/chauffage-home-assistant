@@ -1,12 +1,12 @@
 blueprint:
-  name: Thermostat TPI
+  name: Thermostat TPI perso
   description: Thermostat TPI (Time Propertional & Integral)
   domain: automation
 
   input:
     coeff_c:
       name: Coefficient C
-      description: coefficient multiplicateur de la différence entre la consigne et la température intérieure pour le calcul de la puissance (0.6 conseillé)
+      description: "coefficient multiplicateur de la différence entre la consigne et la température intérieure pour le calcul de la puissance (0.6 conseillé)"
       selector:
         number:
           min: 0.0
@@ -14,48 +14,58 @@ blueprint:
           step: 0.01
     coeff_t:
       name: Coefficient T
-      description: coefficient multiplicateur de la différence entre la consigne et la température extérieure pour le calcul de la puissance (0.01 conseillé)
+      description: "coefficient multiplicateur de la différence entre la consigne et la température extérieure pour le calcul de la puissance (0.01 conseillé)"
       selector:
         number:
           min: 0.0
           max: 0.1
           step: 0.001
+    delay:
+      name: Périodicité en minutes
+      description: "Dépend de l inertie du mode de chauffage utilisé. 30mn à 1 heure pour une chaudière, 10mn pour un convecteur on/off."
+      selector:
+        number:
+          mode: box
+          min: 0
+          max: 90
+          step: 1
+          unit_of_measurement: minutes
     entity_consigne:
       name: Consigne
-      description: Champ d'entrée de la température de consigne (input number).
+      description: "Champ d'entrée de la température de consigne (input number)."
       selector:
         entity:
           domain: input_number
     entity_temp_ext:
       name: Température extérieure
-      description: Sonde de mesure de la température extérieure (sensor)
+      description: "Sonde de mesure de la température extérieure (sensor)"
       selector:
         entity:
           domain: sensor
           device_class: temperature
     entity_temp_int:
       name: Température intérieure
-      description: Sonde de mesure de la température intérieure (sensor)
+      description: "Sonde de mesure de la température intérieure (sensor)"
       selector:
         entity:
           domain: sensor
           device_class: temperature
     entity_fenetre:
       name: Fenêtre
-      description: Capteur d'ouverture de fenêtre (sensor)
+      description: "Capteur d'ouverture de fenêtre (sensor)"
       selector:
         entity:
           domain: binary_sensor
-          device_class: opening
+          #device_class: opening
     entity_puissance:
       name: Puissance
-      description: Champ d'affichage de la puissance (input_number)
+      description: "Champ d'affichage de la puissance (input_number)"
       selector:
         entity:
           domain: input_number
     entity_chauffage:
       name: Chauffage
-      description: Interrupteur marche / arrêt du chauffage (switch)
+      description: "Interrupteur marche / arrêt du chauffage (switch)"
       selector:
         entity:
           domain: switch
@@ -64,6 +74,7 @@ blueprint:
 variables:
   coeff_c: !input coeff_c
   coeff_t: !input coeff_t
+  delay: !input delay
   entity_temp_int: !input entity_temp_int
   entity_temp_ext: !input entity_temp_ext
   entity_fenetre: !input entity_fenetre
@@ -71,43 +82,46 @@ variables:
 trigger:
   - platform: time_pattern
     minutes: "/10"
+    #minutes: !input delay
+    #minutes: "/{{states(delay)}}"
   - platform: state
     entity_id: !input entity_consigne
   - platform: state
     entity_id: !input entity_fenetre
-
 
 action:
   - alias: récupération des données
     variables:
       entity_consigne: !input entity_consigne
       consigne: "{{states(entity_consigne)}}"
-      temp_ext: '{{ states(entity_temp_ext) }}'
-      temp_int: '{{ states(entity_temp_int) }}'
-      fenetre: '{{states(entity_fenetre)}}'     
+      temp_ext: "{{states(entity_temp_ext)}}"
+      temp_int: "{{states(entity_temp_int)}}"
+      fenetre: "{{states(entity_fenetre)}}"
       puissance: >-
-        {%set val = coeff_c * (consigne - temp_int) + coeff_t * (consigne -
-        temp_ext) %}  {% if val > 1 and fenetre == 'off' %} {% set val = 100 %}  {% elif val < 0 or
-        fenetre == 'on' %} {% set val = 0 %}  {% else %} {% set val = ( (val *
-        100) | round(0)) %} {% endif %} {{val}}
-      temps_chauffe: '{{ puissance * 6 }}'
+        {%set val = coeff_c * (consigne - temp_int) + coeff_t * (consigne - temp_ext) %}
+        {% if val > 1 and fenetre == 'off' %} {% set val = 100 %}
+        {% elif val < 0 or fenetre == 'on' %} {% set val = 0 %}
+        {% else %} {% set val = ( (val * 100) | round(0)) %}
+        {% endif %}
+        {{val}}
+      temps_chauffe: "{{ puissance * 6 }}"
   - alias: Met à jour l'indicateur de puissance
     service: input_number.set_value
     target:
       entity_id: !input entity_puissance
     data:
-      value: '{{puissance}}'  
+      value: "{{puissance}}"
   - choose:
       - conditions:
           - condition: template
-            value_template: '{{puissance == 0}}'
+            value_template: "{{puissance == 0}}"
         sequence:
           - service: switch.turn_off
             target:
               entity_id: !input entity_chauffage
       - conditions:
           - condition: template
-            value_template: '{{ puissance > 99}}'
+            value_template: "{{ puissance > 99}}"
         sequence:
           - service: switch.turn_on
             target:
@@ -116,9 +130,8 @@ action:
       - service: switch.turn_on
         target:
           entity_id: !input entity_chauffage
-      - delay: '{{temps_chauffe}}'
+      - delay: "{{temps_chauffe}}"
       - service: switch.turn_off
         target:
           entity_id: !input entity_chauffage
 mode: restart
- 
