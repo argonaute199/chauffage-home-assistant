@@ -2,7 +2,7 @@ blueprint:
   name: Pilotage chauffage
   description: Gestion des différents modes de chauffage - Stop  Hors-gel  Auto confort Auto eco 
   domain: automation
-  source_url: https://github.com/argonaute199/chauffage-home-assistant/edit/main/blueprint/chauffage_pilotage.yaml
+  source_url: https://github.com/argonaute199/chauffage-home-assistant/blob/main/blueprint/chauffage_pilotage.yaml
 
   input:
     entity_consigne:
