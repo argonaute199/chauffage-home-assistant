@@ -60,6 +60,8 @@ action:
               value: 0
             target:
               entity_id: !input entity_consigne
+          - delay:
+              seconds: 1
           - service: switch.turn_off
             target:
               entity_id:
