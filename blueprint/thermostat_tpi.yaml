@@ -7,7 +7,7 @@ blueprint:
   input:
     coeff_c:
       name: Coefficient C
-      description: coefficient multiplicateur de la différence entre la consigne et la température intérieure pour le calcul de la puissance (0.6 conseillé)
+      description: coefficient multiplicateur de la différence entre la consigne et éa température intérieure pour le calcul de la puissance (0.6 conseillé)
       selector:
         number:
           min: 0.0
@@ -15,7 +15,7 @@ blueprint:
           step: 0.01
     coeff_t:
       name: Coefficient T
-      description: coefficient multiplicateur de la différence entre la consigne et la température extérieure pour le calcul de la puissance (0.01 conseillé)
+      description: coefficient multiplicateur de la différence entre la consigne et éa température extérieure pour le calcul de la puissance (0.01 conseillé)
       selector:
         number:
           min: 0.0
@@ -23,7 +23,7 @@ blueprint:
           step: 0.001
     entity_consigne:
       name: Consigne
-      description: Champ d'entrée de la température de consigne (input number).
+      description: Champs d'entrée de la température de consigne (input number).
       selector:
         entity:
           domain: input_number
@@ -42,7 +42,7 @@ blueprint:
           domain: sensor
           device_class: temperature
     entity_fenetre:
-      name: Fenêtre
+      name: Fenètre
       description: Capteur d'ouverture de fenêtre (sensor)
       selector:
         entity:
@@ -50,7 +50,7 @@ blueprint:
           device_class: opening
     entity_puissance:
       name: Puissance
-      description: Champ d'affichage de la puissance (input_number)
+      description: Champs d'affichage de la puissance (input_number)
       selector:
         entity:
           domain: input_number
@@ -121,5 +121,7 @@ action:
       - service: switch.turn_off
         target:
           entity_id: !input entity_chauffage
+mode: restart
+
 mode: restart
  
