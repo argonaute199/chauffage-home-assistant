@@ -7,7 +7,7 @@ blueprint:
   input:
     entity_consigne:
       name: Consigne
-      description: Champs d'entrée de la température de consigne (input number)
+      description: Champs d'entrée de la température de consigne (input number).
       selector:
         entity:
           domain: input_number
